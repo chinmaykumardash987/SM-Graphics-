@@ -1,0 +1,123 @@
+import { useState } from 'react';
+import { Eye, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { portfolioItems, portfolioCategories, CategoryFilter, PortfolioItem } from '../data/portfolioData';
+import { ImageModal } from './ImageModal';
+
+export function Portfolio() {
+  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('All');
+  const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
+
+  const filteredItems = activeCategory === 'All'
+    ? portfolioItems
+    : portfolioItems.filter((item) => item.category === activeCategory);
+
+  return (
+    <section id="portfolio" className="py-20 sm:py-28 bg-slate-900 text-white relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="max-w-3xl mx-auto text-center space-y-4 mb-12">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-400">
+            <span>Client Showcases</span>
+            <span>·</span>
+            <span>Recent Productions</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight font-heading leading-tight">
+            Our Printing Work
+          </h2>
+
+          <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
+            Explore recent flex banners, corporate stationery, promotional signage, and brochures produced right here
+            in Cuttack.
+          </p>
+        </div>
+
+        {/* Category Filter Tabs (Segmented Controls) */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+          {portfolioCategories.map((category) => {
+            const isActive = activeCategory === category;
+            return (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+                  isActive
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-105'
+                    : 'bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700/80 border border-slate-700/60'
+                }`}
+              >
+                {category}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Gallery Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredItems.map((item) => (
+            <div
+              key={item.id}
+              onClick={() => setSelectedItem(item)}
+              className="group relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 hover:border-slate-600 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col"
+            >
+              {/* Image with zoom on hover */}
+              <div className="relative h-60 w-full overflow-hidden bg-slate-900">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover transform group-hover:scale-108 transition-transform duration-500"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+
+                {/* Dark Hover Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+
+                {/* Category Pill Tag */}
+                <div className="absolute top-3 left-3">
+                  <span className="text-[11px] font-semibold text-cyan-300 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-md border border-cyan-800/60">
+                    {item.category}
+                  </span>
+                </div>
+
+                {/* Quick View Button on Hover */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="px-3.5 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                    <Eye className="w-3.5 h-3.5" /> View Project
+                  </span>
+                </div>
+              </div>
+
+              {/* Card Meta Content */}
+              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-2 bg-slate-950">
+                <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors font-heading line-clamp-1">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  {item.description}
+                </p>
+                <div className="pt-2 text-[11px] text-slate-500 font-mono truncate">
+                  {item.specs}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Gallery Replacement Note / Custom Job Prompt */}
+        <div className="mt-14 text-center p-6 rounded-2xl bg-slate-950/60 border border-slate-800 text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">
+          <p>
+            Have a custom size or specific material requirement? We support standard & custom dimensions for all flex
+            signboards, visiting card paper stocks, and marketing brochures.
+          </p>
+          <div className="mt-3 flex items-center justify-center gap-2 text-cyan-400 font-semibold">
+            <span>Direct workshop visits welcome at Menrva Complex, CDA Sector-9</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Item Lightbox Modal */}
+      <ImageModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+    </section>
+  );
+}

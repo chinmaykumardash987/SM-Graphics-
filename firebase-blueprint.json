@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Represents an authenticated user profile at SM Graphics.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the user."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User email address."
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Full name of the user."
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Contact phone number."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp or server timestamp when profile was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp or server timestamp when profile was last updated."
+        }
+      },
+      "required": ["userId", "email"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Represents an appointment or printing consultation booking.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique booking document ID."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Auth UID of the user who made the booking."
+        },
+        "userName": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Name of the person booking the appointment."
+        },
+        "userEmail": {
+          "type": "string",
+          "format": "email",
+          "description": "Email of the person booking."
+        },
+        "userPhone": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Phone number for appointment coordination."
+        },
+        "serviceType": {
+          "type": "string",
+          "enum": [
+            "Digital Printing",
+            "Flex Banner",
+            "Hoarding & Outdoor Signage",
+            "Commercial Stationery",
+            "Visiting Cards",
+            "Brochures & Flyers",
+            "Custom Design & Consultation",
+            "Other"
+          ],
+          "description": "The printing service or consultation needed."
+        },
+        "appointmentDate": {
+          "type": "string",
+          "description": "Date selected for consultation/pickup (YYYY-MM-DD)."
+        },
+        "appointmentTime": {
+          "type": "string",
+          "description": "Time slot selected (e.g., Morning, Afternoon, Evening)."
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Description of print requirements, sizes, or quantities."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "confirmed", "completed", "cancelled"],
+          "description": "Status of the appointment."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp."
+        }
+      },
+      "required": ["userId", "userName", "userPhone", "serviceType", "appointmentDate", "appointmentTime", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Stores user profiles with their contact details."
+    },
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Stores appointment and consultation bookings made by authenticated users."
+    }
+  }
+}
