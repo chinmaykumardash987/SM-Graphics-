@@ -6,6 +6,12 @@ import flexBanner from '../assets/images/flex_banner_signage_1790824898075.jpg';
 import stationeryMockup from '../assets/images/stationery_mockup_1790824909500.jpg';
 import workshopImg from '../assets/images/cuttack_studio_workshop_1790824922488.jpg';
 import heroPress from '../assets/images/hero_printing_facility_1790824873591.jpg';
+import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
+import smStorefrontOffice from '../assets/images/sm_storefront_office_1790931467068.jpg';
+import smFactoryOverview from '../assets/images/sm_factory_overview_1790931485590.jpg';
+import smFlexPressAction from '../assets/images/sm_flex_press_action_1790931498880.jpg';
+import smPromotionalCanopy from '../assets/images/sm_promotional_canopy_1790931543423.jpg';
+import smRollupStandee from '../assets/images/sm_rollup_standee_1790931570729.jpg';
 
 export interface PortfolioItem {
   id: string;
@@ -29,6 +35,54 @@ export const portfolioCategories = [
 export type CategoryFilter = typeof portfolioCategories[number];
 
 export const portfolioItems: PortfolioItem[] = [
+  {
+    id: 'sm-storefront-cda',
+    title: 'SM Graphics Office & Showroom at Minerva Complex',
+    category: 'Signage',
+    image: smStorefrontOffice,
+    description: 'Our customer consultation office and reception at Minerva Complex, CDA Sector-9, Cuttack. Featuring custom ACP & LED boards, vinyl printing panels, and glow signboards.',
+    specs: 'ACP & LED Acrylic Boards · Vinyl Glass Graphics · Minerva Complex CDA Sec-9'
+  },
+  {
+    id: 'sm-factory-overview-banner',
+    title: 'SM Graphics — A Complete Printing Factory',
+    category: 'Flex Banners',
+    image: smFactoryOverview,
+    description: 'Commercial facility banner detailing our industrial flex printing, glow sign boards, digital printing, visiting cards, ACP & LED boards, photo shoots, and vinyl print solutions.',
+    specs: 'Heavy Duty Frontlit Star Flex · True CMYK Output · CDA Sector-9 Cuttack'
+  },
+  {
+    id: 'sm-flex-press-action',
+    title: 'High-Speed Large-Format Flex Printing Press',
+    category: 'Flex Banners',
+    image: smFlexPressAction,
+    description: 'Active production on our roll-to-roll industrial flex printer, delivering vivid, weather-resistant political, event, and commercial advertising banners.',
+    specs: 'Roll-to-Roll Industrial Press · Eco-Solvent Waterproof Inks · 1440 DPI'
+  },
+  {
+    id: 'sm-promotional-canopy-tent',
+    title: 'Promotional Pop-Up Advertising Canopy Tent',
+    category: 'Signage',
+    image: smPromotionalCanopy,
+    description: 'Outdoor corporate promotional canopy pop-up tent fabricated for corporate campaigns, insurance drives, product roadshows, and field activations in Odisha.',
+    specs: 'Weatherproof Heavy Flex Fabric · 6x6 & 8x8 ft Powder-Coated Steel Frame'
+  },
+  {
+    id: 'sm-rollup-standee',
+    title: 'Retractable Pull-Up Roll-Up Standee Display',
+    category: 'Signage',
+    image: smRollupStandee,
+    description: 'Full-color promotional exhibition roll-up standee banner printed on non-tear satin media with sturdy aluminum pull-up base.',
+    specs: '6x2.5 ft Non-Tear Satin Media · Lightweight Aluminum Base with Carry Bag'
+  },
+  {
+    id: 'sm-logo-identity',
+    title: 'Official SM Graphics 3D Emblem & Signage Badge',
+    category: 'Signage',
+    image: smLogoImg,
+    description: 'Custom 3D embossed golden brand emblem for SM Graphics with high-gloss black acrylic substrate, metallic gold lettering, and precision contour finishing.',
+    specs: 'Gloss Acrylic & Golden Mirror Finish · Laser Cut 3D Lettering'
+  },
   {
     id: 'flex-banner-1',
     title: 'Outdoor Commercial Frontlit Flex Banner',

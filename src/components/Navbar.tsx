@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Phone, Menu, X, ArrowUpRight, User, Calendar, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
 
 interface NavbarProps {
   onOpenQuoteModal: () => void;
@@ -77,24 +78,31 @@ export function Navbar({
           {/* Brand Logo Zone */}
           <a
             href="#home"
-            className="flex flex-col group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm"
+            className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm"
             aria-label="SM Graphics Home"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center font-heading">
-                SM<span className="text-cyan-400 ml-0.5">GRAPHICS</span>
-              </span>
-              {/* Subtle CMYK registration dots */}
-              <div className="flex items-center gap-1 ml-1" title="CMYK Print Precision">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block shadow-sm"></span>
-                <span className="w-2 h-2 rounded-full bg-pink-500 inline-block shadow-sm"></span>
-                <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block shadow-sm"></span>
-                <span className="w-2 h-2 rounded-full bg-slate-900 border border-slate-700 inline-block shadow-sm"></span>
+            <img
+              src={smLogoImg}
+              alt="SM Graphics Logo"
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-amber-400/60 shadow-md group-hover:scale-105 transition-transform shrink-0"
+            />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center font-heading">
+                  SM<span className="text-cyan-400 ml-0.5">GRAPHICS</span>
+                </span>
+                {/* Subtle CMYK registration dots */}
+                <div className="hidden sm:flex items-center gap-1 ml-1" title="CMYK Print Precision">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block shadow-sm"></span>
+                  <span className="w-2 h-2 rounded-full bg-pink-500 inline-block shadow-sm"></span>
+                  <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block shadow-sm"></span>
+                  <span className="w-2 h-2 rounded-full bg-slate-900 border border-slate-700 inline-block shadow-sm"></span>
+                </div>
               </div>
+              <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.22em] text-slate-400 uppercase font-sans mt-0.5">
+                PRINT • DESIGN • DISPLAY
+              </span>
             </div>
-            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.22em] text-slate-400 uppercase font-sans mt-0.5">
-              PRINT • DESIGN • DISPLAY
-            </span>
           </a>
 
           {/* Desktop Navigation Links */}

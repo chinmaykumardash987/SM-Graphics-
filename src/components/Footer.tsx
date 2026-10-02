@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin, ArrowUpRight, Heart } from 'lucide-react';
+import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
 
 export function Footer() {
   const handleNavClick = (href: string) => {
@@ -17,22 +18,29 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
           {/* Brand Info & Mission */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-black tracking-tight text-white font-heading">
-                  SM<span className="text-cyan-400 ml-0.5">GRAPHICS</span>
-                </span>
-                {/* CMYK dots */}
-                <div className="flex items-center gap-1 ml-1">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                  <span className="w-2 h-2 rounded-full bg-pink-500" />
-                  <span className="w-2 h-2 rounded-full bg-yellow-400" />
-                  <span className="w-2 h-2 rounded-full bg-slate-700" />
+            <div className="flex items-center gap-3">
+              <img
+                src={smLogoImg}
+                alt="SM Graphics Logo"
+                className="w-12 h-12 rounded-full object-cover border-2 border-amber-400/60 shadow-lg shrink-0"
+              />
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-black tracking-tight text-white font-heading">
+                    SM<span className="text-cyan-400 ml-0.5">GRAPHICS</span>
+                  </span>
+                  {/* CMYK dots */}
+                  <div className="flex items-center gap-1 ml-1">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                    <span className="w-2 h-2 rounded-full bg-pink-500" />
+                    <span className="w-2 h-2 rounded-full bg-yellow-400" />
+                    <span className="w-2 h-2 rounded-full bg-slate-700" />
+                  </div>
                 </div>
+                <span className="text-[11px] font-semibold tracking-[0.22em] text-slate-400 uppercase mt-0.5 font-sans">
+                  PRINT • DESIGN • DISPLAY
+                </span>
               </div>
-              <span className="text-[11px] font-semibold tracking-[0.22em] text-slate-400 uppercase mt-0.5 font-sans">
-                PRINT • DESIGN • DISPLAY
-              </span>
             </div>
 
             <p className="text-sm text-slate-400 max-w-sm leading-relaxed">

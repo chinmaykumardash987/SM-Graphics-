@@ -1,5 +1,6 @@
 import { ArrowRight, Phone, MessageSquare, CheckCircle2, Sparkles, MapPin, Printer, Calendar } from 'lucide-react';
 import heroPressImg from '../assets/images/hero_printing_facility_1790824873591.jpg';
+import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
 
 interface HeroProps {
   onOpenQuoteModal: () => void;
@@ -181,11 +182,16 @@ export function Hero({ onOpenQuoteModal, onOpenBookingModal }: HeroProps) {
 
               {/* Floating Stat Pill on Desktop */}
               <div className="hidden sm:flex absolute -bottom-5 -left-5 bg-slate-900/95 backdrop-blur-md border border-slate-700 p-3.5 rounded-xl shadow-xl items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center font-bold text-blue-400 text-sm">
-                  4.8★
-                </div>
+                <img
+                  src={smLogoImg}
+                  alt="SM Graphics Official Logo"
+                  className="w-11 h-11 rounded-full object-cover border-2 border-amber-400/70 shadow-md shrink-0"
+                />
                 <div>
-                  <div className="text-xs font-bold text-white">Top Rated in Cuttack</div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <span>SM Graphics Cuttack</span>
+                    <span className="text-amber-400 font-bold">4.8★</span>
+                  </div>
                   <div className="text-[11px] text-slate-400">Flex & Digital Print Solutions</div>
                 </div>
               </div>

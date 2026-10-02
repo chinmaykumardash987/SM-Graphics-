@@ -1,5 +1,6 @@
 import { Award, Compass, Zap, MapPin, CheckCircle } from 'lucide-react';
-import workshopImg from '../assets/images/cuttack_studio_workshop_1790824922488.jpg';
+import smStorefrontOffice from '../assets/images/sm_storefront_office_1790931467068.jpg';
+import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
 
 export function About() {
   const pillars = [
@@ -28,25 +29,32 @@ export function About() {
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
               <img
-                src={workshopImg}
-                alt="SM Graphics Printing Studio Production at CDA Sector-9 Cuttack"
+                src={smStorefrontOffice}
+                alt="SM Graphics Office and Showroom at Minerva Complex CDA Sector-9 Cuttack"
                 className="w-full h-[380px] sm:h-[450px] object-cover object-center"
                 referrerPolicy="no-referrer"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
 
               {/* Overlay Badge */}
-              <div className="absolute bottom-6 left-6 right-6 p-4 rounded-xl bg-white/95 backdrop-blur-md shadow-lg border border-slate-100 flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5 font-heading">
-                    <MapPin className="w-4 h-4 text-blue-600" />
-                    Menrva Complex, CDA Sector-9
-                  </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">
-                    Central printing hub serving Cuttack & coastal Odisha
+              <div className="absolute bottom-6 left-6 right-6 p-4 rounded-xl bg-white/95 backdrop-blur-md shadow-lg border border-slate-100 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={smLogoImg}
+                    alt="SM Graphics Official Logo"
+                    className="w-11 h-11 rounded-full object-cover border border-amber-400/60 shadow shrink-0"
+                  />
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5 font-heading">
+                      <MapPin className="w-4 h-4 text-blue-600" />
+                      Menrva Complex, CDA Sector-9
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-0.5">
+                      Central printing hub serving Cuttack & coastal Odisha
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right shrink-0">
                   <span className="inline-block px-2.5 py-1 rounded bg-blue-50 text-blue-700 font-bold text-xs">
                     EST. LOCAL HUB
                   </span>

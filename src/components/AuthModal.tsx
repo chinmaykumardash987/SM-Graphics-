@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Lock, Mail, User, Phone, LogIn, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -104,6 +105,11 @@ export function AuthModal({
 
         {/* Brand Lockup */}
         <div className="text-center space-y-2 mb-6">
+          <img
+            src={smLogoImg}
+            alt="SM Graphics Logo"
+            className="w-14 h-14 mx-auto rounded-full object-cover border-2 border-amber-400/60 shadow-lg mb-2"
+          />
           <div className="flex items-center justify-center gap-1.5">
             <span className="text-2xl font-black font-heading text-white">
               SM<span className="text-cyan-400">GRAPHICS</span>
