@@ -1,5 +1,5 @@
 import { ArrowRight, Phone, MessageSquare, CheckCircle2, Sparkles, MapPin, Printer, Calendar } from 'lucide-react';
-import heroPressImg from '../assets/images/hero_printing_facility_1790824873591.jpg';
+import heroPressImg from '../assets/images/sm_flex_press_action_1790931498880.jpg';
 import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
 
 interface HeroProps {

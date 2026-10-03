@@ -1,17 +1,16 @@
-// Portfolio Data for SM Graphics
-// Easy to update: simply add, edit or replace images and details below.
-
-import digitalSample from '../assets/images/digital_printing_sample_1790824885908.jpg';
-import flexBanner from '../assets/images/flex_banner_signage_1790824898075.jpg';
-import stationeryMockup from '../assets/images/stationery_mockup_1790824909500.jpg';
-import workshopImg from '../assets/images/cuttack_studio_workshop_1790824922488.jpg';
-import heroPress from '../assets/images/hero_printing_facility_1790824873591.jpg';
-import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
+// Portfolio Data for SM Graphics — Featuring Original Images & Real Production Work in Cuttack
 import smStorefrontOffice from '../assets/images/sm_storefront_office_1790931467068.jpg';
 import smFactoryOverview from '../assets/images/sm_factory_overview_1790931485590.jpg';
 import smFlexPressAction from '../assets/images/sm_flex_press_action_1790931498880.jpg';
-import smPromotionalCanopy from '../assets/images/sm_promotional_canopy_1790931543423.jpg';
 import smRollupStandee from '../assets/images/sm_rollup_standee_1790931570729.jpg';
+import smDigitalPressSample from '../assets/images/sm_digital_press_sample_1791040402535.jpg';
+import smCommercialPoster from '../assets/images/sm_commercial_poster_1791040422537.jpg';
+import smStageEventSignage from '../assets/images/sm_stage_event_signage_1791040439493.jpg';
+import smFestivalBackdropCuttack from '../assets/images/sm_festival_backdrop_cuttack_1791040458012.jpg';
+import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
+
+import digitalSample from '../assets/images/digital_printing_sample_1790824885908.jpg';
+import stationeryMockup from '../assets/images/stationery_mockup_1790824909500.jpg';
 
 export interface PortfolioItem {
   id: string;
@@ -20,16 +19,18 @@ export interface PortfolioItem {
   image: string;
   description: string;
   specs: string;
+  isRealFacilityPhoto: boolean;
+  badgeLabel: 'Original SM Graphics Work' | 'Actual Facility Photo' | 'Demonstration Design';
 }
 
 export const portfolioCategories = [
   'All',
   'Flex Banners',
-  'Visiting Cards',
+  'Signage',
   'Brochures',
+  'Visiting Cards',
   'Letterheads',
-  'Invitations',
-  'Signage'
+  'Invitations'
 ] as const;
 
 export type CategoryFilter = typeof portfolioCategories[number];
@@ -40,40 +41,80 @@ export const portfolioItems: PortfolioItem[] = [
     title: 'SM Graphics Office & Showroom at Minerva Complex',
     category: 'Signage',
     image: smStorefrontOffice,
-    description: 'Our customer consultation office and reception at Minerva Complex, CDA Sector-9, Cuttack. Featuring custom ACP & LED boards, vinyl printing panels, and glow signboards.',
-    specs: 'ACP & LED Acrylic Boards · Vinyl Glass Graphics · Minerva Complex CDA Sec-9'
-  },
-  {
-    id: 'sm-factory-overview-banner',
-    title: 'SM Graphics — A Complete Printing Factory',
-    category: 'Flex Banners',
-    image: smFactoryOverview,
-    description: 'Commercial facility banner detailing our industrial flex printing, glow sign boards, digital printing, visiting cards, ACP & LED boards, photo shoots, and vinyl print solutions.',
-    specs: 'Heavy Duty Frontlit Star Flex · True CMYK Output · CDA Sector-9 Cuttack'
+    description: 'Our physical customer consultation office, reception, and showroom at Minerva Complex, CDA Sector-9, Cuttack. Featuring custom ACP & LED display boards, vinyl printing panels, and glow signboards.',
+    specs: 'Minerva Complex CDA Sec-9 · ACP & LED Display · Central Cuttack Hub',
+    isRealFacilityPhoto: true,
+    badgeLabel: 'Actual Facility Photo'
   },
   {
     id: 'sm-flex-press-action',
-    title: 'High-Speed Large-Format Flex Printing Press',
+    title: 'Industrial Large-Format Flex Printing Press in Action',
     category: 'Flex Banners',
     image: smFlexPressAction,
-    description: 'Active production on our roll-to-roll industrial flex printer, delivering vivid, weather-resistant political, event, and commercial advertising banners.',
-    specs: 'Roll-to-Roll Industrial Press · Eco-Solvent Waterproof Inks · 1440 DPI'
+    description: 'Active production on our roll-to-roll industrial flex printer at SM Graphics workshop in Cuttack, delivering high-speed, weather-resistant commercial and event banners.',
+    specs: 'Roll-to-Roll Industrial Press · Eco-Solvent Waterproof Inks · 1440 DPI Precision',
+    isRealFacilityPhoto: true,
+    badgeLabel: 'Original SM Graphics Work'
   },
   {
-    id: 'sm-promotional-canopy-tent',
-    title: 'Promotional Pop-Up Advertising Canopy Tent',
+    id: 'sm-factory-overview-banner',
+    title: 'SM Graphics — A Complete Printing Factory Board',
+    category: 'Flex Banners',
+    image: smFactoryOverview,
+    description: 'Official production capabilities board highlighting our flex printing, glow signboards, digital printing, visiting cards, photo shoots, ACP & LED boards, and vinyl printing.',
+    specs: 'Full-Scale Print Capabilities · CDA Sector-9 Cuttack · Heavy Star Flex',
+    isRealFacilityPhoto: true,
+    badgeLabel: 'Original SM Graphics Work'
+  },
+  {
+    id: 'sm-stage-event-signage',
+    title: 'Odisha State Film & Cultural Awards Event Stage Signage',
     category: 'Signage',
-    image: smPromotionalCanopy,
-    description: 'Outdoor corporate promotional canopy pop-up tent fabricated for corporate campaigns, insurance drives, product roadshows, and field activations in Odisha.',
-    specs: 'Weatherproof Heavy Flex Fabric · 6x6 & 8x8 ft Powder-Coated Steel Frame'
+    image: smStageEventSignage,
+    description: 'Grand live cultural awards ceremony stage production in Odisha, featuring large-format backdrop prints, illuminated digital LED screen enclosures, podium branding, and decorative stage pillars.',
+    specs: 'Live Event Production · Multi-Display LED & Stage Backdrops · Odisha State Event',
+    isRealFacilityPhoto: true,
+    badgeLabel: 'Original SM Graphics Work'
+  },
+  {
+    id: 'sm-festival-backdrop-cuttack',
+    title: '25th Raja Mahotsaba Silver Jubilee Backdrop at Saheed Bhawan',
+    category: 'Flex Banners',
+    image: smFestivalBackdropCuttack,
+    description: 'Large-scale outdoor cultural festival flex backdrop designed and printed for Soor Mandir’s 25th Raja Mahotsaba at Saheed Bhawan, Cuttack, featuring traditional Odia festival artwork and photo booth layout.',
+    specs: 'Saheed Bhawan Cuttack · Large-Format Event Flex Backdrop · Festival Stage Design',
+    isRealFacilityPhoto: true,
+    badgeLabel: 'Original SM Graphics Work'
+  },
+  {
+    id: 'sm-commercial-poster',
+    title: 'SM Graphics Official Flex Printing Showcase Poster',
+    category: 'Flex Banners',
+    image: smCommercialPoster,
+    description: 'Commercial promotional flex print showcase for SM Graphics, detailing comprehensive printing services including Flex Board, Vinyl Print, Glow Signs, Retro Print, LED Board, and ACP Boards.',
+    specs: 'Flex Board · Vinyl Print · Glow Sign · Retro & ACP LED · Minerva Complex CDA-9',
+    isRealFacilityPhoto: true,
+    badgeLabel: 'Original SM Graphics Work'
   },
   {
     id: 'sm-rollup-standee',
-    title: 'Retractable Pull-Up Roll-Up Standee Display',
+    title: 'Commercial Exhibition & Retail Roll-Up Standees Production',
     category: 'Signage',
     image: smRollupStandee,
-    description: 'Full-color promotional exhibition roll-up standee banner printed on non-tear satin media with sturdy aluminum pull-up base.',
-    specs: '6x2.5 ft Non-Tear Satin Media · Lightweight Aluminum Base with Carry Bag'
+    description: 'Completed production batch of high-impact promotional roll-up pull-up standees in our workshop, printed on non-tear satin media with sturdy aluminum bases for corporate campaigns.',
+    specs: 'Non-Tear Satin Media · Roll-Up Aluminum Mechanism · Workshop Batch Production',
+    isRealFacilityPhoto: true,
+    badgeLabel: 'Original SM Graphics Work'
+  },
+  {
+    id: 'sm-digital-press-sample',
+    title: 'VersaEXPRESS RF-640 High-Precision Digital Roll Output',
+    category: 'Brochures',
+    image: smDigitalPressSample,
+    description: 'High-definition digital roll test print on our Roland VersaEXPRESS RF-640 press, demonstrating vivid CMYK saturation, sharp micro-gradients, and photo-realistic detail.',
+    specs: 'Roland VersaEXPRESS RF-640 · High-Density Inks · Photographic Color Fidelity',
+    isRealFacilityPhoto: true,
+    badgeLabel: 'Original SM Graphics Work'
   },
   {
     id: 'sm-logo-identity',
@@ -81,70 +122,48 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'Signage',
     image: smLogoImg,
     description: 'Custom 3D embossed golden brand emblem for SM Graphics with high-gloss black acrylic substrate, metallic gold lettering, and precision contour finishing.',
-    specs: 'Gloss Acrylic & Golden Mirror Finish · Laser Cut 3D Lettering'
+    specs: 'Gloss Acrylic & Golden Mirror Finish · Laser Cut 3D Detailing',
+    isRealFacilityPhoto: true,
+    badgeLabel: 'Actual Facility Photo'
   },
   {
-    id: 'flex-banner-1',
-    title: 'Outdoor Commercial Frontlit Flex Banner',
-    category: 'Flex Banners',
-    image: flexBanner,
-    description: 'Heavy-duty 440 GSM star flex banner printed with eco-solvent waterproof inks for high outdoor durability.',
-    specs: '440 GSM Star Flex · UV & Weather Proof · High DPI Output'
-  },
-  {
-    id: 'visiting-card-1',
-    title: 'Velvet Matte Premium Visiting Cards',
+    id: 'sample-visiting-cards',
+    title: 'Executive Visiting Cards with Velvet Matte Finish',
     category: 'Visiting Cards',
     image: stationeryMockup,
-    description: '350 GSM art card with thermal matte lamination and spot UV detailing for an unmistakable executive feel.',
-    specs: '350 GSM Board · Velvet Touch Lamination · Die Cut Finish'
+    description: '350 GSM premium imported art card stock with soft-touch thermal matte lamination, spot UV detailing, and precision die-cut corners for corporate leadership.',
+    specs: '350 GSM Imported Board · Velvet Touch Lamination · Die-Cut Edge Finish',
+    isRealFacilityPhoto: false,
+    badgeLabel: 'Demonstration Design'
   },
   {
-    id: 'brochure-1',
-    title: 'Multi-fold Tri-Fold Corporate Brochure',
+    id: 'sample-brochure',
+    title: 'High-Definition Multi-Fold Corporate Brochures',
     category: 'Brochures',
     image: digitalSample,
-    description: 'High-definition digital multi-colour offset-quality tri-fold brochures for corporate and educational events.',
-    specs: '170 GSM Gloss Art Paper · Creased Folding · True CMYK'
+    description: 'High-definition multi-page and tri-fold corporate marketing brochures printed with calibrated digital offset fidelity and crisp micro-typography.',
+    specs: '170 GSM Gloss Art Paper · Precision Creased Folding · True CMYK Output',
+    isRealFacilityPhoto: false,
+    badgeLabel: 'Demonstration Design'
   },
   {
-    id: 'signage-1',
-    title: 'Glow Sign Board & Backlit Hoarding Display',
-    category: 'Signage',
-    image: flexBanner,
-    description: 'Vibrant backlit vinyl signage mounted on sturdy metal structure for 24/7 commercial brand visibility.',
-    specs: 'Backlit Translucent Media · LED Illumination Compatible · Heavy Frame'
-  },
-  {
-    id: 'letterhead-1',
-    title: 'Official Corporate Letterheads & Envelopes',
+    id: 'sample-letterhead',
+    title: 'Official Corporate Letterheads & Executive Envelopes',
     category: 'Letterheads',
     image: stationeryMockup,
-    description: '100 GSM executive bond paper with laser-printer friendly inks and crisp crest reproduction.',
-    specs: '100 GSM Royal Bond · Sharp Vector Micro-Typography'
+    description: '100 GSM executive bond paper with crisp vector crest reproduction, compatible with all office laser and desktop inkjet printers.',
+    specs: '100 GSM Royal Bond Paper · Crisp Vector Reproduction · Watermarked Finish',
+    isRealFacilityPhoto: false,
+    badgeLabel: 'Demonstration Design'
   },
   {
-    id: 'invitations-1',
-    title: 'Festive & Premium Wedding Invitation Cards',
+    id: 'sample-invitations',
+    title: 'Bespoke Wedding & Milestone Event Invitation Cards',
     category: 'Invitations',
     image: digitalSample,
-    description: 'Bespoke invitation printing with metallic foil accents, textured virgin board, and custom design layouts.',
-    specs: '300 GSM Textured Board · Gold Foil Accent · Custom Envelopes'
-  },
-  {
-    id: 'flex-hoarding-2',
-    title: 'Large Format CDA Commercial Hoarding',
-    category: 'Flex Banners',
-    image: workshopImg,
-    description: 'Seamless large-format print for city roadside hoardings and festival promotional campaigns in Cuttack.',
-    specs: 'Large Scale Seamless Seaming · Vibrant Fade-Resistant Inks'
-  },
-  {
-    id: 'signage-2',
-    title: 'Retail Shop Standee & Directional Signboard',
-    category: 'Signage',
-    image: heroPress,
-    description: 'Roll-up pull-up standees with aluminum base for storefront promotions, exhibition stalls, and announcements.',
-    specs: 'Tear-Resistant Satin Media · Portable Aluminum Base'
+    description: 'Bespoke invitation printing with metallic foil accents, textured virgin board, and custom design layouts for personal celebrations.',
+    specs: '300 GSM Textured Board · Metallic Accents · Bespoke Envelopes',
+    isRealFacilityPhoto: false,
+    badgeLabel: 'Demonstration Design'
   }
 ];

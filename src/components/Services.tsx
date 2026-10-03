@@ -1,6 +1,6 @@
 import { Printer, Megaphone, CreditCard, ArrowRight, Check } from 'lucide-react';
-import digitalImg from '../assets/images/digital_printing_sample_1790824885908.jpg';
-import flexImg from '../assets/images/flex_banner_signage_1790824898075.jpg';
+import digitalImg from '../assets/images/sm_digital_press_sample_1791040402535.jpg';
+import flexImg from '../assets/images/sm_commercial_poster_1791040422537.jpg';
 import stationeryImg from '../assets/images/stationery_mockup_1790824909500.jpg';
 
 interface ServicesProps {
