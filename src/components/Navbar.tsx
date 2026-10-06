@@ -1,26 +1,35 @@
 import { useState, useEffect, useRef } from 'react';
-import { Phone, Menu, X, ArrowUpRight, User, Calendar, LogOut, ChevronDown } from 'lucide-react';
+import { Phone, Menu, X, ArrowUpRight, User, Calendar, LogOut, ChevronDown, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
+
+const ADMIN_EMAILS = [
+  'chinmaykumardash987@gmail.com',
+  'smgraphicscda@gmail.com'
+];
 
 interface NavbarProps {
   onOpenQuoteModal: () => void;
   onOpenAuthModal: () => void;
   onOpenBookingModal: () => void;
   onOpenMyBookings: () => void;
+  onOpenAdminPanel: () => void;
 }
 
 export function Navbar({
   onOpenQuoteModal,
   onOpenAuthModal,
   onOpenBookingModal,
-  onOpenMyBookings
+  onOpenMyBookings,
+  onOpenAdminPanel
 }: NavbarProps) {
   const { currentUser, userProfile, logout } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  const isAdmin = currentUser?.email && ADMIN_EMAILS.includes(currentUser.email.toLowerCase());
 
   useEffect(() => {
     const handleScroll = () => {
@@ -125,6 +134,18 @@ export function Navbar({
 
           {/* Desktop Action Zone */}
           <div className="hidden sm:flex items-center gap-2.5">
+            {/* Admin Panel Button */}
+            {isAdmin && (
+              <button
+                onClick={onOpenAdminPanel}
+                className="px-3.5 py-2 text-xs font-bold text-amber-300 hover:text-white bg-amber-950/70 hover:bg-amber-900/80 border border-amber-600/80 rounded-lg transition-all flex items-center gap-1.5 shadow-md active:scale-95 cursor-pointer ring-1 ring-amber-500/30"
+                title="Open SM Graphics Admin Portal"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                <span>Admin Panel</span>
+              </button>
+            )}
+
             {/* Appointment Booking Action */}
             <button
               onClick={onOpenBookingModal}
@@ -150,11 +171,24 @@ export function Navbar({
                 </button>
 
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-52 rounded-xl bg-slate-900 border border-slate-700 shadow-2xl py-2 z-50 animate-in fade-in duration-150">
+                  <div className="absolute right-0 mt-2 w-56 rounded-xl bg-slate-900 border border-slate-700 shadow-2xl py-2 z-50 animate-in fade-in duration-150">
                     <div className="px-3 py-1.5 border-b border-slate-800">
                       <p className="text-[11px] text-slate-400">Signed in as</p>
                       <p className="text-xs font-bold text-white truncate">{currentUser.email}</p>
                     </div>
+
+                    {/* Admin portal shortcut in dropdown */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        onOpenAdminPanel();
+                      }}
+                      className="w-full text-left px-3 py-2 text-xs text-amber-300 hover:text-amber-200 hover:bg-slate-800 flex items-center gap-2 transition-colors cursor-pointer"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Admin Portal {isAdmin ? '★' : ''}</span>
+                    </button>
 
                     <button
                       type="button"
@@ -220,6 +254,15 @@ export function Navbar({
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-2 lg:hidden">
+            {isAdmin && (
+              <button
+                onClick={onOpenAdminPanel}
+                className="p-2 text-amber-300 bg-amber-950 border border-amber-700 rounded-lg flex items-center justify-center"
+                aria-label="Admin Portal"
+              >
+                <ShieldCheck className="w-4 h-4 text-amber-400" />
+              </button>
+            )}
             <button
               onClick={onOpenBookingModal}
               className="p-2 text-cyan-300 bg-cyan-950 border border-cyan-800 rounded-lg flex items-center justify-center"
@@ -257,7 +300,12 @@ export function Navbar({
                   {displayName.charAt(0)}
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-white">{displayName}</div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <span>{displayName}</span>
+                    {isAdmin && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-950 border border-amber-700 text-amber-300">Admin</span>
+                    )}
+                  </div>
                   <div className="text-[10px] text-slate-400 truncate max-w-[170px]">{currentUser.email}</div>
                 </div>
               </div>
@@ -310,6 +358,18 @@ export function Navbar({
           </nav>
 
           <div className="pt-3 border-t border-slate-800/80 flex flex-col gap-2.5">
+            {/* Admin Portal Button in Mobile */}
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                onOpenAdminPanel();
+              }}
+              className="w-full text-center px-4 py-2.5 text-xs font-bold text-amber-300 bg-amber-950/60 border border-amber-700/80 rounded-lg hover:bg-amber-900/60 flex items-center justify-center gap-2"
+            >
+              <ShieldCheck className="w-4 h-4 text-amber-400" />
+              <span>Admin Portal & Bookings</span>
+            </button>
+
             <button
               onClick={() => {
                 setIsMobileMenuOpen(false);

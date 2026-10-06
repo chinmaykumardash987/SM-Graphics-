@@ -1,7 +1,11 @@
-import { Phone, Mail, MapPin, ArrowUpRight, Heart } from 'lucide-react';
+import { Phone, Mail, MapPin, ArrowUpRight, Heart, ShieldCheck } from 'lucide-react';
 import smLogoImg from '../assets/images/sm_graphics_logo_1790931105985.jpg';
 
-export function Footer() {
+interface FooterProps {
+  onOpenAdminPanel?: () => void;
+}
+
+export function Footer({ onOpenAdminPanel }: FooterProps) {
   const handleNavClick = (href: string) => {
     const element = document.querySelector(href);
     if (element) {
@@ -156,6 +160,19 @@ export function Footer() {
           </div>
           <div className="flex items-center gap-4">
             <span>High Quality Printing · Cuttack, Odisha</span>
+            {onOpenAdminPanel && (
+              <>
+                <span>·</span>
+                <button
+                  type="button"
+                  onClick={onOpenAdminPanel}
+                  className="hover:text-amber-400 text-slate-400 font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Admin Portal</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

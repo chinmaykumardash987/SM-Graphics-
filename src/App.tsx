@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -17,6 +17,7 @@ import { QuoteEstimatorModal } from './components/QuoteEstimatorModal';
 import { AuthModal } from './components/AuthModal';
 import { AppointmentBookingModal } from './components/AppointmentBookingModal';
 import { UserBookingsModal } from './components/UserBookingsModal';
+import { AdminPanelModal } from './components/AdminPanelModal';
 
 function MainLayout() {
   const { currentUser } = useAuth();
@@ -32,8 +33,21 @@ function MainLayout() {
   const [bookingService, setBookingService] = useState('Digital Printing');
 
   const [isMyBookingsOpen, setIsMyBookingsOpen] = useState(false);
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
 
   const [contactPreselectedService, setContactPreselectedService] = useState('Digital Printing');
+
+  // Listen for #admin in url hash
+  useEffect(() => {
+    const checkHash = () => {
+      if (window.location.hash === '#admin') {
+        setIsAdminPanelOpen(true);
+      }
+    };
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, []);
 
   const handleOpenQuoteModal = (serviceName: string = 'Flex Banners') => {
     setSelectedServiceForQuote(serviceName);
@@ -83,7 +97,7 @@ function MainLayout() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
-      {/* Sticky Responsive Navbar with Auth & Booking triggers */}
+      {/* Sticky Responsive Navbar with Auth, Booking & Admin triggers */}
       <Navbar
         onOpenQuoteModal={() => handleOpenQuoteModal('Flex Banners')}
         onOpenAuthModal={() => {
@@ -99,6 +113,7 @@ function MainLayout() {
             setIsMyBookingsOpen(true);
           }
         }}
+        onOpenAdminPanel={() => setIsAdminPanelOpen(true)}
       />
 
       {/* Main Content Layout */}
@@ -140,8 +155,8 @@ function MainLayout() {
         <ContactSection initialService={contactPreselectedService} />
       </main>
 
-      {/* Dark Premium Footer */}
-      <Footer />
+      {/* Dark Premium Footer with Admin Portal link */}
+      <Footer onOpenAdminPanel={() => setIsAdminPanelOpen(true)} />
 
       {/* Floating Action Buttons: WhatsApp & Mobile Call */}
       <FloatingActions />
@@ -177,6 +192,21 @@ function MainLayout() {
         onBookNew={() => {
           setIsMyBookingsOpen(false);
           setIsBookingModalOpen(true);
+        }}
+      />
+
+      {/* Dedicated Admin Portal Modal */}
+      <AdminPanelModal
+        isOpen={isAdminPanelOpen}
+        onClose={() => {
+          setIsAdminPanelOpen(false);
+          if (window.location.hash === '#admin') {
+            window.history.pushState(null, '', window.location.pathname);
+          }
+        }}
+        onOpenAuthModal={() => {
+          setAuthSubtitle('Sign in with your authorized admin email (chinmaykumardash987@gmail.com) to access the Admin Portal.');
+          setIsAuthModalOpen(true);
         }}
       />
     </div>
