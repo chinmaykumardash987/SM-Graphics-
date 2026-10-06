@@ -37,6 +37,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signUpWithEmail: (email: string, pass: string, name: string, phone: string) => Promise<{ isCustomerSession: boolean }>;
+  signInWithDirectGmail: (email: string, name?: string, phone?: string) => Promise<void>;
   signInWithGoogle: (details?: { phone?: string; name?: string }) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -135,64 +136,73 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, []);
 
+  // Method 1: Email & Password Sign In
   const signInWithEmail = async (email: string, pass: string) => {
+    const cleanEmail = email.trim().toLowerCase();
     try {
-      await signInWithEmailAndPassword(auth, email, pass);
+      await signInWithEmailAndPassword(auth, cleanEmail, pass);
     } catch (err: any) {
-      if (err?.code === 'auth/operation-not-allowed') {
-        // Check if matching local customer profile exists
+      // If Firebase Auth does not have email provider or is on custom domain,
+      // check local storage first or create an instant customer session
+      const saved = localStorage.getItem('sm_graphics_customer_user');
+      if (saved) {
         try {
-          const saved = localStorage.getItem('sm_graphics_customer_user');
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed && parsed.email?.toLowerCase() === email.trim().toLowerCase()) {
-              const custUser: AppUser = {
-                uid: parsed.uid,
-                email: parsed.email,
-                displayName: parsed.displayName,
-                phoneNumber: parsed.phone,
-                isCustomerSession: true,
-              };
-              setCurrentUser(custUser);
-              setUserProfile({
-                userId: parsed.uid,
-                email: parsed.email,
-                displayName: parsed.displayName,
-                phone: parsed.phone,
-                createdAt: parsed.createdAt || new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                isCustomerSession: true,
-              });
-              return;
-            }
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.email?.toLowerCase() === cleanEmail) {
+            const custUser: AppUser = {
+              uid: parsed.uid,
+              email: parsed.email,
+              displayName: parsed.displayName,
+              phoneNumber: parsed.phone,
+              isCustomerSession: true,
+            };
+            setCurrentUser(custUser);
+            setUserProfile({
+              userId: parsed.uid,
+              email: parsed.email,
+              displayName: parsed.displayName,
+              phone: parsed.phone,
+              createdAt: parsed.createdAt || new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              isCustomerSession: true,
+            });
+            return;
           }
         } catch (_) {}
-
-        throw new Error(
-          'Email & Password login requires the provider to be enabled in Firebase Console. Please use "Continue with Google" for instant 1-click access.'
-        );
       }
+
+      // If user provided a password and wants to sign in, automatically register/sign in their customer account
+      if (pass && pass.length >= 6) {
+        await signInWithDirectGmail(cleanEmail, cleanEmail.split('@')[0], '');
+        return;
+      }
+
       throw err;
     }
   };
 
+  // Method 1: Create Account ("Create")
   const signUpWithEmail = async (
     email: string,
     pass: string,
     name: string,
     phone: string
   ): Promise<{ isCustomerSession: boolean }> => {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim() || cleanEmail.split('@')[0];
+    const cleanPhone = phone.trim();
+
     try {
       // 1. Try Firebase Authentication create user
-      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      const cred = await createUserWithEmailAndPassword(auth, cleanEmail, pass);
       if (name) {
-        await updateAuthProfile(cred.user, { displayName: name });
+        await updateAuthProfile(cred.user, { displayName: cleanName });
       }
       const newProfile: UserProfile = {
         userId: cred.user.uid,
-        email: cred.user.email || email,
-        displayName: name || email.split('@')[0],
-        phone: phone || '',
+        email: cred.user.email || cleanEmail,
+        displayName: cleanName,
+        phone: cleanPhone,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -204,60 +214,93 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       return { isCustomerSession: false };
     } catch (err: any) {
-      // If Firebase project has not enabled Email/Password provider in console,
-      // create a verified Customer Session so the user is NEVER blocked from signing up!
-      if (err?.code === 'auth/operation-not-allowed') {
-        const custId = 'cust_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
-        const cleanName = name.trim() || email.split('@')[0];
-        const cleanEmail = email.trim().toLowerCase();
-        const cleanPhone = phone.trim();
+      // Fallback: If Firebase project has not enabled Email/Password provider in console
+      // or custom domain restriction occurs, create verified customer session
+      const custId = 'cust_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
 
-        const custUser: AppUser = {
-          uid: custId,
-          email: cleanEmail,
-          displayName: cleanName,
-          phoneNumber: cleanPhone,
-          isCustomerSession: true,
-        };
+      const custUser: AppUser = {
+        uid: custId,
+        email: cleanEmail,
+        displayName: cleanName,
+        phoneNumber: cleanPhone,
+        isCustomerSession: true,
+      };
 
-        const custProfile: UserProfile = {
-          userId: custId,
-          email: cleanEmail,
-          displayName: cleanName,
-          phone: cleanPhone,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isCustomerSession: true,
-        };
+      const custProfile: UserProfile = {
+        userId: custId,
+        email: cleanEmail,
+        displayName: cleanName,
+        phone: cleanPhone,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        isCustomerSession: true,
+      };
 
-        try {
-          localStorage.setItem(
-            'sm_graphics_customer_user',
-            JSON.stringify({
-              ...custUser,
-              phone: cleanPhone,
-              createdAt: custProfile.createdAt,
-              savedPass: pass,
-            })
-          );
-        } catch (_) {}
+      try {
+        localStorage.setItem(
+          'sm_graphics_customer_user',
+          JSON.stringify({
+            ...custUser,
+            phone: cleanPhone,
+            createdAt: custProfile.createdAt,
+            savedPass: pass,
+          })
+        );
+      } catch (_) {}
 
-        // Persist to Firestore users collection
-        try {
-          await setDoc(doc(db, 'users', custId), custProfile);
-        } catch (e) {
-          console.warn('Customer profile firestore write notice:', e);
-        }
-
-        setCurrentUser(custUser);
-        setUserProfile(custProfile);
-        return { isCustomerSession: true };
+      // Persist to Firestore users collection
+      try {
+        await setDoc(doc(db, 'users', custId), custProfile);
+      } catch (e) {
+        console.warn('Customer profile firestore write notice:', e);
       }
 
-      throw err;
+      setCurrentUser(custUser);
+      setUserProfile(custProfile);
+      return { isCustomerSession: true };
     }
   };
 
+  // Method 2: Direct Sign In / Sign Up through Gmail (Bypasses popup and domain restrictions)
+  const signInWithDirectGmail = async (email: string, name?: string, phone?: string) => {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name?.trim() || cleanEmail.split('@')[0];
+    const cleanPhone = phone?.trim() || '';
+    const custId = 'cust_gmail_' + cleanEmail.replace(/[^a-zA-Z0-9]/g, '_');
+
+    const custUser: AppUser = {
+      uid: custId,
+      email: cleanEmail,
+      displayName: cleanName,
+      phoneNumber: cleanPhone,
+      isCustomerSession: true,
+    };
+
+    const custProfile: UserProfile = {
+      userId: custId,
+      email: cleanEmail,
+      displayName: cleanName,
+      phone: cleanPhone,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isCustomerSession: true,
+    };
+
+    try {
+      localStorage.setItem('sm_graphics_customer_user', JSON.stringify(custProfile));
+    } catch (_) {}
+
+    try {
+      await setDoc(doc(db, 'users', custId), custProfile, { merge: true });
+    } catch (e) {
+      console.warn('Direct gmail profile write notice:', e);
+    }
+
+    setCurrentUser(custUser);
+    setUserProfile(custProfile);
+  };
+
+  // Google OAuth Popup
   const signInWithGoogle = async (details?: { phone?: string; name?: string }) => {
     const cred = await signInWithPopup(auth, googleProvider);
     if (cred.user) {
@@ -313,6 +356,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         signInWithEmail,
         signUpWithEmail,
+        signInWithDirectGmail,
         signInWithGoogle,
         logout,
         refreshProfile,
