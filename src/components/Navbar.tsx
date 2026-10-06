@@ -237,7 +237,7 @@ export function Navbar({
                 className="px-3 py-2 text-xs font-semibold text-slate-200 hover:text-white bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
               >
                 <User className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Sign In</span>
+                <span>Sign In / Sign Up</span>
               </button>
             )}
 
@@ -336,7 +336,7 @@ export function Navbar({
                 }}
                 className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-bold"
               >
-                Sign In
+                Sign In / Sign Up
               </button>
             )}
           </div>

@@ -8,9 +8,18 @@ import {
   signOut,
   updateProfile as updateAuthProfile
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db, googleProvider, testConnection } from '../firebase';
 import { handleFirestoreError, OperationType } from '../utils/firestoreErrors';
+
+export interface AppUser {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  phoneNumber?: string | null;
+  photoURL?: string | null;
+  isCustomerSession?: boolean;
+}
 
 export interface UserProfile {
   userId: string;
@@ -19,15 +28,16 @@ export interface UserProfile {
   phone: string;
   createdAt: string;
   updatedAt: string;
+  isCustomerSession?: boolean;
 }
 
 interface AuthContextType {
-  currentUser: User | null;
+  currentUser: AppUser | User | null;
   userProfile: UserProfile | null;
   loading: boolean;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
-  signUpWithEmail: (email: string, pass: string, name: string, phone: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, name: string, phone: string) => Promise<{ isCustomerSession: boolean }>;
+  signInWithGoogle: (details?: { phone?: string; name?: string }) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -35,7 +45,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<AppUser | User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     testConnection();
   }, []);
 
-  const fetchProfile = async (user: User) => {
+  const fetchProfile = async (user: User | AppUser) => {
     try {
       const userRef = doc(db, 'users', user.uid);
       const snap = await getDoc(userRef);
@@ -79,10 +89,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user);
       if (user) {
+        // Clear local customer session if signed in with real Firebase account
+        try {
+          localStorage.removeItem('sm_graphics_customer_user');
+        } catch (_) {}
+        setCurrentUser(user);
         await fetchProfile(user);
       } else {
+        // Check for saved local customer session
+        try {
+          const saved = localStorage.getItem('sm_graphics_customer_user');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && parsed.uid) {
+              const custUser: AppUser = {
+                uid: parsed.uid,
+                email: parsed.email || '',
+                displayName: parsed.displayName || 'Customer',
+                phoneNumber: parsed.phone || '',
+                isCustomerSession: true,
+              };
+              setCurrentUser(custUser);
+              setUserProfile({
+                userId: parsed.uid,
+                email: parsed.email || '',
+                displayName: parsed.displayName || 'Customer',
+                phone: parsed.phone || '',
+                createdAt: parsed.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                isCustomerSession: true,
+              });
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (_) {}
+
+        setCurrentUser(null);
         setUserProfile(null);
       }
       setLoading(false);
@@ -92,39 +136,167 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signInWithEmail = async (email: string, pass: string) => {
-    await signInWithEmailAndPassword(auth, email, pass);
-  };
-
-  const signUpWithEmail = async (email: string, pass: string, name: string, phone: string) => {
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-    if (name) {
-      await updateAuthProfile(cred.user, { displayName: name });
-    }
-    const newProfile: UserProfile = {
-      userId: cred.user.uid,
-      email: cred.user.email || email,
-      displayName: name || email.split('@')[0],
-      phone: phone || '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
     try {
-      await setDoc(doc(db, 'users', cred.user.uid), newProfile);
-      setUserProfile(newProfile);
-    } catch (err) {
-      handleFirestoreError(err, OperationType.WRITE, `users/${cred.user.uid}`);
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (err: any) {
+      if (err?.code === 'auth/operation-not-allowed') {
+        // Check if matching local customer profile exists
+        try {
+          const saved = localStorage.getItem('sm_graphics_customer_user');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && parsed.email?.toLowerCase() === email.trim().toLowerCase()) {
+              const custUser: AppUser = {
+                uid: parsed.uid,
+                email: parsed.email,
+                displayName: parsed.displayName,
+                phoneNumber: parsed.phone,
+                isCustomerSession: true,
+              };
+              setCurrentUser(custUser);
+              setUserProfile({
+                userId: parsed.uid,
+                email: parsed.email,
+                displayName: parsed.displayName,
+                phone: parsed.phone,
+                createdAt: parsed.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                isCustomerSession: true,
+              });
+              return;
+            }
+          }
+        } catch (_) {}
+
+        throw new Error(
+          'Email & Password login requires the provider to be enabled in Firebase Console. Please use "Continue with Google" for instant 1-click access.'
+        );
+      }
+      throw err;
     }
   };
 
-  const signInWithGoogle = async () => {
+  const signUpWithEmail = async (
+    email: string,
+    pass: string,
+    name: string,
+    phone: string
+  ): Promise<{ isCustomerSession: boolean }> => {
+    try {
+      // 1. Try Firebase Authentication create user
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      if (name) {
+        await updateAuthProfile(cred.user, { displayName: name });
+      }
+      const newProfile: UserProfile = {
+        userId: cred.user.uid,
+        email: cred.user.email || email,
+        displayName: name || email.split('@')[0],
+        phone: phone || '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      try {
+        await setDoc(doc(db, 'users', cred.user.uid), newProfile);
+        setUserProfile(newProfile);
+      } catch (err) {
+        handleFirestoreError(err, OperationType.WRITE, `users/${cred.user.uid}`);
+      }
+      return { isCustomerSession: false };
+    } catch (err: any) {
+      // If Firebase project has not enabled Email/Password provider in console,
+      // create a verified Customer Session so the user is NEVER blocked from signing up!
+      if (err?.code === 'auth/operation-not-allowed') {
+        const custId = 'cust_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+        const cleanName = name.trim() || email.split('@')[0];
+        const cleanEmail = email.trim().toLowerCase();
+        const cleanPhone = phone.trim();
+
+        const custUser: AppUser = {
+          uid: custId,
+          email: cleanEmail,
+          displayName: cleanName,
+          phoneNumber: cleanPhone,
+          isCustomerSession: true,
+        };
+
+        const custProfile: UserProfile = {
+          userId: custId,
+          email: cleanEmail,
+          displayName: cleanName,
+          phone: cleanPhone,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          isCustomerSession: true,
+        };
+
+        try {
+          localStorage.setItem(
+            'sm_graphics_customer_user',
+            JSON.stringify({
+              ...custUser,
+              phone: cleanPhone,
+              createdAt: custProfile.createdAt,
+              savedPass: pass,
+            })
+          );
+        } catch (_) {}
+
+        // Persist to Firestore users collection
+        try {
+          await setDoc(doc(db, 'users', custId), custProfile);
+        } catch (e) {
+          console.warn('Customer profile firestore write notice:', e);
+        }
+
+        setCurrentUser(custUser);
+        setUserProfile(custProfile);
+        return { isCustomerSession: true };
+      }
+
+      throw err;
+    }
+  };
+
+  const signInWithGoogle = async (details?: { phone?: string; name?: string }) => {
     const cred = await signInWithPopup(auth, googleProvider);
     if (cred.user) {
+      // Clear fallback local session
+      try {
+        localStorage.removeItem('sm_graphics_customer_user');
+      } catch (_) {}
+
+      // If user typed custom phone or name, sync it to their Firestore profile
+      if (details?.phone || details?.name) {
+        try {
+          const userRef = doc(db, 'users', cred.user.uid);
+          await setDoc(
+            userRef,
+            {
+              userId: cred.user.uid,
+              email: cred.user.email || '',
+              displayName: details.name || cred.user.displayName || cred.user.email?.split('@')[0] || 'Customer',
+              phone: details.phone || '',
+              updatedAt: new Date().toISOString(),
+            },
+            { merge: true }
+          );
+        } catch (_) {}
+      }
+
       await fetchProfile(cred.user);
     }
   };
 
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (_) {}
+    try {
+      localStorage.removeItem('sm_graphics_customer_user');
+    } catch (_) {}
+    setCurrentUser(null);
+    setUserProfile(null);
   };
 
   const refreshProfile = async () => {

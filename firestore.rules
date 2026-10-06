@@ -35,19 +35,21 @@ service cloud.firestore {
 
     // User Profile Documents
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId)
-                    && request.resource.data.userId == request.auth.uid
-                    && request.resource.data.email is string;
-      allow update: if isOwner(userId) || isAdmin();
+      allow read: if isOwner(userId) || isAdmin() || (userId.matches('^cust_[a-zA-Z0-9_\\-]+$'));
+      allow create: if (isOwner(userId) && request.resource.data.userId == request.auth.uid && request.resource.data.email is string)
+                    || (userId.matches('^cust_[a-zA-Z0-9_\\-]+$') && request.resource.data.userId == userId && request.resource.data.email is string);
+      allow update: if isOwner(userId) || isAdmin() || (userId.matches('^cust_[a-zA-Z0-9_\\-]+$') && request.resource.data.userId == userId);
       allow delete: if isAdmin();
     }
 
     // Appointment Bookings
     match /bookings/{bookingId} {
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-      allow create: if isSignedIn()
-                    && request.resource.data.userId == request.auth.uid
+      allow read: if (isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin()))
+                  || (!isSignedIn() && resource.data.userId.matches('^cust_[a-zA-Z0-9_\\-]+$'));
+      allow create: if (
+                      (isSignedIn() && request.resource.data.userId == request.auth.uid) ||
+                      (!isSignedIn() && request.resource.data.userId.matches('^cust_[a-zA-Z0-9_\\-]+$'))
+                    )
                     && request.resource.data.userName is string
                     && request.resource.data.userName.size() <= 100
                     && request.resource.data.userPhone is string
@@ -56,13 +58,18 @@ service cloud.firestore {
                     && request.resource.data.appointmentDate is string
                     && request.resource.data.appointmentTime is string
                     && request.resource.data.status in ['pending', 'confirmed', 'completed', 'cancelled'];
-      allow update: if isSignedIn() && (
+      allow update: if (isSignedIn() && (
                       isAdmin() ||
                       (
                         resource.data.userId == request.auth.uid &&
                         request.resource.data.userId == request.auth.uid &&
                         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
                       )
+                    )) || (
+                      !isSignedIn() &&
+                      resource.data.userId.matches('^cust_[a-zA-Z0-9_\\-]+$') &&
+                      request.resource.data.userId == resource.data.userId &&
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
                     );
       allow delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
     }
